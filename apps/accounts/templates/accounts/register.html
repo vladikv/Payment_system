@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Register — PayFlow{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="auth-header">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⬡</div>
+        <h1>Create Account</h1>
+        <p>Your wallet will be opened automatically</p>
+    </div>
+
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            <div class="two-col">
+                <div class="form-group">
+                    <label>{{ form.first_name.label }}</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<ul class="errorlist">{% for e in form.first_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label>{{ form.last_name.label }}</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<ul class="errorlist">{% for e in form.last_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+            {% for field in form %}
+                {% if field.name not in 'first_name,last_name' %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                    {% if field.help_text %}<small style="color: var(--muted); font-size: 12px; display:block; margin-top:4px;">{{ field.help_text }}</small>{% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top:0.5rem;">Register</button>
+        </form>
+    </div>
+
+    <div class="auth-footer">
+        Already have an account? <a href="{% url 'login' %}">Login</a>
+    </div>
+</div>
+{% endblock %}

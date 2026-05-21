@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Wallet — PayFlow{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="balance-card">
+    <div class="balance-label">Current Balance</div>
+    <div class="balance-amount">{{ wallet.currency_symbol }}{{ wallet.balance }}</div>
+    <div class="balance-user">{{ user.get_full_name|default:user.username }} · {{ wallet.currency }}</div>
+</div>
+
+<div class="actions">
+    <a href="{% url 'stripe_deposit' %}" class="action-btn">
+        <span class="action-icon">⬇</span>
+        Top Up
+    </a>
+    <a href="{% url 'wallet_transfer' %}" class="action-btn">
+        <span class="action-icon">↗</span>
+        Transfer
+    </a>
+    <a href="{% url 'wallet_withdraw' %}" class="action-btn">
+        <span class="action-icon">⬆</span>
+        Withdraw
+    </a>
+</div>
+
+<div class="section-title">Recent Transactions</div>
+{% if transactions %}
+<div class="tx-list">
+    {% for tx in transactions %}
+    <div class="tx-item">
+        <div class="tx-left">
+            <div class="tx-icon {% if tx.is_income %}income{% else %}expense{% endif %}">
+                {% if tx.is_income %}⬇{% else %}⬆{% endif %}
+            </div>
+            <div>
+                <div class="tx-name">{{ tx.get_transaction_type_display }}</div>
+                <div class="tx-date">{{ tx.created_at|date:"d.m.Y H:i" }} · {{ tx.description|default:"—" }}</div>
+            </div>
+        </div>
+        <div class="tx-amount {% if tx.is_income %}income{% else %}expense{% endif %}">
+            {% if tx.is_income %}+{% else %}-{% endif %}{{ wallet.currency_symbol }}{{ tx.amount }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div style="margin-top: 1rem; text-align: center;">
+    <a href="{% url 'wallet_history' %}" class="btn btn-ghost">View All →</a>
+</div>
+{% else %}
+<div class="empty">
+    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+    No transactions yet.<br>Top up your wallet to get started!
+</div>
+{% endif %}
+{% endblock %}

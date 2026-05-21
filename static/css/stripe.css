@@ -1,0 +1,48 @@
+.stripe-wrap { max-width: 480px; margin: 0 auto; }
+.amount-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.preset-btn {
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.preset-btn:hover, .preset-btn.active {
+    border-color: var(--accent);
+    color: var(--text);
+    background: rgba(108,99,255,0.1);
+}
+#stripe-card-element {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    transition: border 0.15s;
+}
+#stripe-card-element.StripeElement--focus { border-color: var(--accent); }
+#stripe-card-element.StripeElement--invalid { border-color: var(--red); }
+#card-errors { color: #fca5a5; font-size: 13px; margin-top: 8px; min-height: 20px; }
+#submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.security-note {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--muted);
+    margin-top: 1rem;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+.spinner {
+    display: none;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

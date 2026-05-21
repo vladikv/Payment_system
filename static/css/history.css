@@ -1,0 +1,14 @@
+.tx-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: 8px; margin-bottom: 4px;
+}
+.tx-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 1rem; }
+.tx-icon.income { background: rgba(34,197,94,0.1); }
+.tx-icon.expense { background: rgba(239,68,68,0.1); }
+.tx-amount.income { color: var(--green); font-weight: 700; }
+.tx-amount.expense { color: var(--red); font-weight: 700; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-completed { background: rgba(34,197,94,0.1); color: #86efac; }
+.badge-pending { background: rgba(234,179,8,0.1); color: #fde047; }
+.badge-failed { background: rgba(239,68,68,0.1); color: #fca5a5; }

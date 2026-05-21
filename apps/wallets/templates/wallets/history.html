@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}History — PayFlow{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/history.css' %}">
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+    <div>
+        <a href="{% url 'wallet_dashboard' %}" style="color: var(--muted); text-decoration: none; font-size: 14px;">← Back</a>
+        <h2 style="font-size: 1.4rem; font-weight: 700; margin-top: 0.5rem;">Transaction History</h2>
+    </div>
+    <div style="color: var(--muted); font-size: 13px;">Total: {{ transactions.count }}</div>
+</div>
+
+{% if transactions %}
+    {% for tx in transactions %}
+    <div class="tx-item">
+        <div style="display: flex; align-items: center;">
+            <div class="tx-icon {% if tx.is_income %}income{% else %}expense{% endif %}">
+                {% if tx.is_income %}⬇{% else %}⬆{% endif %}
+            </div>
+            <div>
+                <div style="font-weight: 600; font-size: 14px;">{{ tx.get_transaction_type_display }}</div>
+                <div style="font-size: 12px; color: var(--muted);">
+                    {{ tx.created_at|date:"d.m.Y H:i" }}
+                    {% if tx.description %} · {{ tx.description }}{% endif %}
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span class="badge badge-{{ tx.status }}">{{ tx.get_status_display }}</span>
+            <div class="tx-amount {% if tx.is_income %}income{% else %}expense{% endif %}">
+                {% if tx.is_income %}+{% else %}-{% endif %}{{ wallet.currency_symbol }}{{ tx.amount }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div style="text-align: center; padding: 4rem; color: var(--muted);">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📭</div>
+        No transactions yet
+    </div>
+{% endif %}
+{% endblock %}

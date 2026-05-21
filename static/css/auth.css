@@ -1,0 +1,7 @@
+.auth-wrap { max-width: 480px; margin: 3rem auto; }
+.auth-header { text-align: center; margin-bottom: 2rem; }
+.auth-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+.auth-header p { color: var(--muted); font-size: 14px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.auth-footer { text-align: center; margin-top: 1.5rem; color: var(--muted); font-size: 14px; }
+.auth-footer a { color: var(--accent); text-decoration: none; font-weight: 600; }

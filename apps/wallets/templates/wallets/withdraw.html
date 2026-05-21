@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Withdraw — PayFlow{% endblock %}
+{% block content %}
+<div style="max-width: 480px; margin: 0 auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a href="{% url 'wallet_dashboard' %}" style="color: var(--muted); text-decoration: none; font-size: 14px;">← Back</a>
+        <h2 style="font-size: 1.4rem; font-weight: 700; margin-top: 0.5rem;">Withdraw Funds</h2>
+        <p style="color: var(--muted); font-size: 14px; margin-top: 4px;">Available: {{ wallet.currency_symbol }}{{ wallet.balance }}</p>
+    </div>
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-red btn-block" style="margin-top: 0.5rem;">Withdraw</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

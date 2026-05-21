@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PayFlow{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<nav>
+    <a href="{% url 'wallet_dashboard' %}" class="nav-logo">⬡ PayFlow</a>
+    <div class="nav-links">
+        <a href="{% url 'wallet_dashboard' %}">Wallet</a>
+        <a href="{% url 'wallet_transfer' %}">Transfer</a>
+        <a href="{% url 'wallet_history' %}">History</a>
+        <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+    </div>
+</nav>
+{% endif %}
+
+<div class="container">
+    {% if messages %}
+    <div class="messages">
+        {% for msg in messages %}
+        <div class="message {{ msg.tags }}">{{ msg }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
