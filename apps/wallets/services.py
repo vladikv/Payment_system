@@ -2,10 +2,16 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 from decimal import Decimal
 from .models import Wallet, Transaction
+from .tasks import (
+    send_deposit_email,
+    send_transfer_sent_email,
+    send_transfer_received_email,
+    send_withdrawal_email,
+)
 
 
 def deposit(wallet: Wallet, amount: Decimal, description: str = '') -> Transaction:
-    """Deposit to wallet."""
+    """Credit funds to a wallet."""
     if amount <= 0:
         raise ValidationError('Amount must be greater than zero.')
 
@@ -18,13 +24,23 @@ def deposit(wallet: Wallet, amount: Decimal, description: str = '') -> Transacti
             transaction_type='deposit',
             amount=amount,
             status='completed',
-            description=description or f'Deposit of {amount} {wallet.currency}',
+            description=description or f'Deposit {amount} {wallet.currency}',
         )
+
+    # Send email in background
+    if wallet.user.email:
+        send_deposit_email.delay(
+            user_email=wallet.user.email,
+            amount=str(amount),
+            currency_symbol=wallet.currency_symbol,
+            balance=str(wallet.balance),
+        )
+
     return tx
 
 
 def withdraw(wallet: Wallet, amount: Decimal, description: str = '') -> Transaction:
-    """Withdraw funds."""
+    """Debit funds from a wallet."""
     if amount <= 0:
         raise ValidationError('Amount must be greater than zero.')
     if not wallet.can_withdraw(amount):
@@ -39,17 +55,27 @@ def withdraw(wallet: Wallet, amount: Decimal, description: str = '') -> Transact
             transaction_type='withdrawal',
             amount=amount,
             status='completed',
-            description=description or f'Withdrawal of {amount} {wallet.currency}',
+            description=description or f'Withdrawal {amount} {wallet.currency}',
         )
+
+    # Send email in background
+    if wallet.user.email:
+        send_withdrawal_email.delay(
+            user_email=wallet.user.email,
+            amount=str(amount),
+            currency_symbol=wallet.currency_symbol,
+            balance=str(wallet.balance),
+        )
+
     return tx
 
 
 def transfer(sender_wallet: Wallet, receiver_wallet: Wallet, amount: Decimal, description: str = '') -> tuple:
-    """Transfer between wallets. Returns (tx_out, tx_in)."""
+    """Transfer funds between two wallets. Returns (tx_out, tx_in)."""
     if amount <= 0:
         raise ValidationError('Amount must be greater than zero.')
     if sender_wallet == receiver_wallet:
-        raise ValidationError('Cannot transfer funds to yourself.')
+        raise ValidationError('Cannot transfer to yourself.')
     if not sender_wallet.can_withdraw(amount):
         raise ValidationError('Insufficient funds.')
 
@@ -79,6 +105,23 @@ def transfer(sender_wallet: Wallet, receiver_wallet: Wallet, amount: Decimal, de
             amount=amount,
             status='completed',
             description=description or f'Transfer from {sender_name}',
+        )
+
+    # Send emails in background
+    if sender_wallet.user.email:
+        send_transfer_sent_email.delay(
+            user_email=sender_wallet.user.email,
+            amount=str(amount),
+            currency_symbol=sender_wallet.currency_symbol,
+            recipient_username=receiver_name,
+        )
+
+    if receiver_wallet.user.email:
+        send_transfer_received_email.delay(
+            user_email=receiver_wallet.user.email,
+            amount=str(amount),
+            currency_symbol=receiver_wallet.currency_symbol,
+            sender_username=sender_name,
         )
 
     return tx_out, tx_in

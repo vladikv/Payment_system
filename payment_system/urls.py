@@ -7,5 +7,6 @@ urlpatterns = [
     path('accounts/', include('apps.accounts.urls')),
     path('wallet/', include('apps.wallets.urls')),
     path('payments/', include('apps.payments.urls')),
+    path('api/', include('apps.api.urls')),
     path('', RedirectView.as_view(pattern_name='wallet_dashboard'), name='home'),
 ]
