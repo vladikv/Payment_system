@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
-print("STRIPE KEY:", os.environ.get('STRIPE_SECRET_KEY', 'NOT FOUND'))
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
@@ -22,6 +21,7 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.wallets',
     'apps.payments',
+    'apps.api',
 ]
 
 MIDDLEWARE = [
@@ -72,8 +72,17 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
 LANGUAGE_CODE = 'uk'
-TIME_ZONE = 'Europe/Kyiv'
+TIME_ZONE = 'Europe/Warsaw'
 USE_I18N = True
 USE_TZ = True
 
@@ -87,6 +96,6 @@ LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 
 # ── Stripe (replace with your keys from stripe.com/dashboard) ──
-STRIPE_PUBLIC_KEY = 'pk_test_YOUR_PUBLISHABLE_KEY'
-STRIPE_SECRET_KEY = 'sk_test_YOUR_SECRET_KEY'
-STRIPE_WEBHOOK_SECRET = 'whsec_YOUR_WEBHOOK_SECRET'
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
