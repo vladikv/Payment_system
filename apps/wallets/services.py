@@ -46,6 +46,20 @@ def withdraw(wallet: Wallet, amount: Decimal, description: str = '') -> Transact
     if not wallet.can_withdraw(amount):
         raise ValidationError('Insufficient funds.')
 
+    # Check limits
+    if hasattr(wallet, 'limits'):
+        limits = wallet.limits
+        if amount > limits.max_single_withdrawal:
+            raise ValidationError(
+                f'Single withdrawal limit is {wallet.currency_symbol}{limits.max_single_withdrawal}.'
+            )
+        daily_withdrawn = limits.get_daily_withdrawn()
+        if daily_withdrawn + amount > limits.max_daily_withdrawal:
+            remaining = limits.max_daily_withdrawal - daily_withdrawn
+            raise ValidationError(
+                f'Daily withdrawal limit exceeded. Remaining: {wallet.currency_symbol}{remaining}.'
+            )
+
     with transaction.atomic():
         wallet.balance -= amount
         wallet.save(update_fields=['balance', 'updated_at'])
@@ -58,7 +72,6 @@ def withdraw(wallet: Wallet, amount: Decimal, description: str = '') -> Transact
             description=description or f'Withdrawal {amount} {wallet.currency}',
         )
 
-    # Send email in background
     if wallet.user.email:
         send_withdrawal_email.delay(
             user_email=wallet.user.email,
@@ -78,6 +91,14 @@ def transfer(sender_wallet: Wallet, receiver_wallet: Wallet, amount: Decimal, de
         raise ValidationError('Cannot transfer to yourself.')
     if not sender_wallet.can_withdraw(amount):
         raise ValidationError('Insufficient funds.')
+
+    # Check limits
+    if hasattr(sender_wallet, 'limits'):
+        limits = sender_wallet.limits
+        if amount > limits.max_single_transfer:
+            raise ValidationError(
+                f'Single transfer limit is {sender_wallet.currency_symbol}{limits.max_single_transfer}.'
+            )
 
     receiver_name = receiver_wallet.user.get_full_name() or receiver_wallet.user.username
     sender_name = sender_wallet.user.get_full_name() or sender_wallet.user.username
@@ -107,7 +128,6 @@ def transfer(sender_wallet: Wallet, receiver_wallet: Wallet, amount: Decimal, de
             description=description or f'Transfer from {sender_name}',
         )
 
-    # Send emails in background
     if sender_wallet.user.email:
         send_transfer_sent_email.delay(
             user_email=sender_wallet.user.email,

@@ -64,3 +64,33 @@ class Transaction(models.Model):
     @property
     def is_income(self):
         return self.transaction_type in ('deposit', 'transfer_in')
+
+class TransactionLimit(models.Model):
+    wallet = models.OneToOneField(Wallet, on_delete=models.CASCADE, related_name='limits')
+    max_single_transfer = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal('1000.00'),
+        help_text='Maximum amount per single transfer'
+    )
+    max_daily_withdrawal = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal('2000.00'),
+        help_text='Maximum total withdrawal per day'
+    )
+    max_single_withdrawal = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal('500.00'),
+        help_text='Maximum amount per single withdrawal'
+    )
+
+    def __str__(self):
+        return f'Limits for {self.wallet.user.username}'
+
+    def get_daily_withdrawn(self):
+        """Total amount withdrawn today."""
+        from django.utils import timezone
+        today = timezone.now().date()
+        from django.db.models import Sum
+        result = self.wallet.transactions.filter(
+            transaction_type='withdrawal',
+            status='completed',
+            created_at__date=today,
+        ).aggregate(total=Sum('amount'))
+        return result['total'] or Decimal('0.00')

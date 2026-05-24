@@ -25,10 +25,9 @@ class Profile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-        # Create wallet automatically
-        from apps.wallets.models import Wallet
-        Wallet.objects.create(user=instance)
-
+        from apps.wallets.models import Wallet, TransactionLimit
+        wallet = Wallet.objects.create(user=instance)
+        TransactionLimit.objects.create(wallet=wallet)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
