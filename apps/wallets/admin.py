@@ -19,11 +19,20 @@ class LimitsInline(admin.StackedInline):
 
 @admin.register(Wallet)
 class WalletAdmin(admin.ModelAdmin):
-    list_display = ('user', 'balance', 'currency', 'is_active', 'created_at')
-    list_filter = ('currency', 'is_active')
+    list_display = ('user', 'balance', 'currency', 'is_active', 'is_frozen', 'created_at')
+    list_filter = ('currency', 'is_active', 'is_frozen')
     search_fields = ('user__username', 'user__email')
     readonly_fields = ('created_at', 'updated_at')
     inlines = (LimitsInline, TransactionInline)
+    actions = ['freeze_wallets', 'unfreeze_wallets']
+
+    @admin.action(description='Freeze selected wallets')
+    def freeze_wallets(self, request, queryset):
+        queryset.update(is_frozen=True)
+
+    @admin.action(description='Unfreeze selected wallets')
+    def unfreeze_wallets(self, request, queryset):
+        queryset.update(is_frozen=False)
 
 
 @admin.register(Transaction)

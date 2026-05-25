@@ -124,3 +124,12 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Payment system API documentation',
     'VERSION': '1.0.0',
 }
+
+EXCHANGE_RATE_API_KEY = os.environ.get('EXCHANGE_RATE_API_KEY')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://localhost:6379/1',
+    }
+}

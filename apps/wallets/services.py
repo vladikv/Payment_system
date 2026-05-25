@@ -8,7 +8,29 @@ from .tasks import (
     send_transfer_received_email,
     send_withdrawal_email,
 )
+from django.utils import timezone
+from datetime import timedelta
 
+
+def check_suspicious_activity(wallet: Wallet) -> bool:
+    """
+    Returns True if wallet looks suspicious.
+    Freezes wallet automatically if suspicious.
+    """
+    now = timezone.now()
+    ten_minutes_ago = now - timedelta(minutes=10)
+
+    # Check: more than 10 transactions in last 10 minutes
+    recent_count = wallet.transactions.filter(
+        created_at__gte=ten_minutes_ago
+    ).count()
+
+    if recent_count >= 10:
+        wallet.is_frozen = True
+        wallet.save(update_fields=['is_frozen'])
+        return True
+
+    return False
 
 def deposit(wallet: Wallet, amount: Decimal, description: str = '') -> Transaction:
     """Credit funds to a wallet."""
@@ -46,6 +68,12 @@ def withdraw(wallet: Wallet, amount: Decimal, description: str = '') -> Transact
     if not wallet.can_withdraw(amount):
         raise ValidationError('Insufficient funds.')
 
+    # Check if wallet is frozen
+    if wallet.is_frozen:
+        raise ValidationError('Your wallet is frozen. Please contact support.')
+
+    # Check suspicious activity
+    check_suspicious_activity(wallet)
     # Check limits
     if hasattr(wallet, 'limits'):
         limits = wallet.limits
@@ -92,6 +120,12 @@ def transfer(sender_wallet: Wallet, receiver_wallet: Wallet, amount: Decimal, de
     if not sender_wallet.can_withdraw(amount):
         raise ValidationError('Insufficient funds.')
 
+    # Check if wallet is frozen
+    if sender_wallet.is_frozen:
+        raise ValidationError('Your wallet is frozen. Please contact support.')
+
+    # Check suspicious activity
+    check_suspicious_activity(sender_wallet)
     # Check limits
     if hasattr(sender_wallet, 'limits'):
         limits = sender_wallet.limits

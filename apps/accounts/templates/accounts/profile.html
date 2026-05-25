@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile — PayFlow{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-wrap">
+    <div class="page-header">
+        <a href="{% url 'wallet_dashboard' %}" class="page-back">← Back</a>
+        <h2>My Profile</h2>
+    </div>
+
+    <div class="card profile-card">
+        <div class="avatar">{{ user.profile.avatar_initials }}</div>
+        <div class="info-row">
+            <span class="info-label">Full name</span>
+            <span class="info-value">{{ user.get_full_name|default:"—" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Username</span>
+            <span class="info-value">{{ user.username }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ user.email|default:"—" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Joined</span>
+            <span class="info-value">{{ user.date_joined|date:"d M Y" }}</span>
+        </div>
+    </div>
+
+    <div class="card profile-card">
+        <div class="info-row">
+            <span class="info-label">Wallet balance</span>
+            <span class="info-value balance">{{ user.wallet.currency_symbol }}{{ user.wallet.balance }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Currency</span>
+            <span class="info-value">{{ user.wallet.currency }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Total transactions</span>
+            <span class="info-value">{{ user.wallet.transactions.count }}</span>
+        </div>
+    </div>
+
+    <div class="profile-actions">
+        <a href="{% url 'wallet_dashboard' %}" class="btn btn-primary">Go to Wallet</a>
+        <a href="{% url 'wallet_history' %}" class="btn btn-ghost">Transaction History</a>
+    </div>
+
+    <div class="card profile-card qr-card">
+        <div class="qr-title">My QR Code</div>
+        <p class="qr-subtitle">Scan to send me money</p>
+        <img src="{% url 'wallet_qr' %}" alt="QR Code" class="qr-image">
+        <p class="qr-username">@{{ user.username }}</p>
+    </div>
+</div>
+{% endblock %}

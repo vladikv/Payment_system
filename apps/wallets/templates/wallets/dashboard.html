@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}Wallet — PayFlow{% endblock %}
 
 {% block extra_css %}
@@ -7,12 +8,44 @@
 {% endblock %}
 
 {% block content %}
+
+<!-- Balance -->
 <div class="balance-card">
     <div class="balance-label">Current Balance</div>
     <div class="balance-amount">{{ wallet.currency_symbol }}{{ wallet.balance }}</div>
     <div class="balance-user">{{ user.get_full_name|default:user.username }} · {{ wallet.currency }}</div>
 </div>
 
+<!-- Currency converter -->
+<div class="card converter-card">
+    <div class="converter-title">Currency Converter</div>
+    <form method="get" class="converter-form">
+        <select name="convert_to">
+            <option value="">Select currency...</option>
+            {% for currency in currencies %}
+                {% if currency != wallet.currency %}
+                <option value="{{ currency }}" {% if convert_to == currency %}selected{% endif %}>
+                    {{ currency }}
+                </option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-ghost">Convert</button>
+    </form>
+
+    {% if converted_balance %}
+    <div class="converter-result">
+        <div class="converter-result-label">
+            {{ wallet.balance }} {{ wallet.currency }} =
+        </div>
+        <div class="converter-result-amount">
+            {{ converted_balance.amount }} {{ converted_balance.currency }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Actions -->
 <div class="actions">
     <a href="{% url 'stripe_deposit' %}" class="action-btn">
         <span class="action-icon">⬇</span>
@@ -28,6 +61,7 @@
     </a>
 </div>
 
+<!-- Recent transactions -->
 <div class="section-title">Recent Transactions</div>
 {% if transactions %}
 <div class="tx-list">
@@ -48,13 +82,32 @@
     </div>
     {% endfor %}
 </div>
-<div style="margin-top: 1rem; text-align: center;">
+<div class="view-all">
     <a href="{% url 'wallet_history' %}" class="btn btn-ghost">View All →</a>
 </div>
 {% else %}
 <div class="empty">
-    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+    <div class="empty-icon">📋</div>
     No transactions yet.<br>Top up your wallet to get started!
 </div>
 {% endif %}
+
+<!-- Chart -->
+<div class="chart-section">
+    <div class="section-title">Income & Expenses</div>
+    <div class="card chart-card">
+        <div class="chart-wrapper">
+            <canvas id="transactionChart" height="100"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    const CHART_LABELS = {{ chart_labels|safe }};
+    const CHART_INCOME = {{ chart_income|safe }};
+    const CHART_EXPENSE = {{ chart_expense|safe }};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/dashboard_chart.js' %}"></script>
+
 {% endblock %}
