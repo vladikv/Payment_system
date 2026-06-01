@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script src="{% static 'js/theme.js' %}"></script>
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -22,6 +23,8 @@
         <a href="{% url 'wallet_dashboard' %}">Wallet</a>
         <a href="{% url 'wallet_transfer' %}">Transfer</a>
         <a href="{% url 'wallet_history' %}">History</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <button id="theme-toggle" class="btn-theme" onclick="toggleTheme()">🌙</button>
         <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
     </div>
 </nav>

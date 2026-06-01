@@ -94,3 +94,24 @@
     margin-top: 0.75rem;
     font-weight: 600;
 }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+    .profile-wrap {
+        padding: 0;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .profile-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .qr-image {
+        width: 160px;
+        height: 160px;
+    }
+}

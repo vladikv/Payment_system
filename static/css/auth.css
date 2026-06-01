@@ -5,3 +5,15 @@
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .auth-footer { text-align: center; margin-top: 1.5rem; color: var(--muted); font-size: 14px; }
 .auth-footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+    .auth-wrap {
+        margin: 1.5rem auto;
+        padding: 0 0.5rem;
+    }
+
+    .auth-header h1 {
+        font-size: 1.5rem;
+    }
+}

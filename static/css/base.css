@@ -10,8 +10,25 @@
     --green: #22c55e;
     --red: #ef4444;
     --text: #e8e9f0;
-    --muted: #7b7f96;
+    --atext: #ffffff;
+    --muted: #ffffff;
     --radius: 12px;
+}
+
+/* ── Light theme ── */
+[data-theme="light"] {
+    --bg:           #f0f2f8;
+    --bg-card:      #ffffff;
+    --bg-input:     #f5f6fa;
+    --border:       #dde1ee;
+    --accent:       #6c63ff;
+    --accent-hover: #5a52e0;
+    --green:        #16a34a;
+    --red:          #dc2626;
+    --text:         #1a1d27;
+    /* --atext:         #ffffff; */
+    --muted:        #6b7280;
+    --radius:       12px;
 }
 
 body {
@@ -21,6 +38,7 @@ body {
     min-height: 100vh;
     font-size: 15px;
 }
+
 
 /* NAV */
 nav {
@@ -81,6 +99,8 @@ nav {
     padding: 1.5rem;
 }
 
+
+
 /* FORMS */
 .form-group { margin-bottom: 1.2rem; }
 label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -101,6 +121,21 @@ input:focus, select:focus { border-color: var(--accent); }
 .errorlist li { color: #fca5a5; font-size: 13px; }
 
 /* BUTTONS */
+.btn-theme {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.15s;
+}
+
+.btn-theme:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+}
 .btn {
     display: inline-flex;
     align-items: center;
@@ -123,3 +158,38 @@ input:focus, select:focus { border-color: var(--accent); }
 .btn-red { background: var(--red); color: #fff; }
 .btn-red:hover { background: #dc2626; }
 .btn-block { width: 100%; justify-content: center; padding: 12px; font-size: 15px; }
+
+
+/* ── Mobile adaptation ── */
+@media (max-width: 600px) {
+    nav {
+        padding: 0 1rem;
+        height: 56px;
+    }
+
+    .nav-logo {
+        font-size: 1rem;
+    }
+
+    .nav-links a {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-block {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    input, select {
+        font-size: 16px; /* prevents iOS zoom on focus */
+    }
+}
