@@ -24,4 +24,4 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 # Run gunicorn
-CMD ["gunicorn", "payment_system.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD gunicorn payment_system.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
