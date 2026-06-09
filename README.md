@@ -68,38 +68,6 @@ docker compose exec web python manage.py createsuperuser
 
 Open http://localhost:8000
 
-### Without Docker (local development)
-
-```bash
-# 1. Clone and create virtual environment
-git clone https://github.com/vladikv/Payment_system
-cd Payment_system
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# 2. Install dependencies
-pip install -r requirements.txt
-
-# 3. Set up environment variables
-cp .env.example .env
-# Open .env and fill in your credentials
-
-# 4. Apply migrations
-python manage.py migrate
-
-# 5. Create superuser
-python manage.py createsuperuser
-
-# 6. Start Redis (required for Celery)
-redis-server
-
-# 7. Start Celery worker (in separate terminal)
-celery -A payment_system worker --loglevel=info --pool=solo
-
-# 8. Run development server
-python manage.py runserver
-```
-
 ---
 
 ## Environment Variables
