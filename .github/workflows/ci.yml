@@ -38,7 +38,7 @@ jobs:
       DB_USER: payflow_user
       DB_PASSWORD: payflow123
       DB_HOST: localhost
-      DB_PORT: 5433
+      DB_PORT: 5432
       CELERY_BROKER_URL: redis://localhost:6379/0
       CELERY_RESULT_BACKEND: redis://localhost:6379/0
       STRIPE_PUBLIC_KEY: pk_test_dummy
