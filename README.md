@@ -1,6 +1,9 @@
 # PayFlow 💳
 
-A full-stack payment system built with Django — from database architecture to containerized deployment with real card payments, background notifications, and a REST API.
+A full-stack payment system built with Django — from database architecture to production deployment on Railway with CI/CD, real card payments, background notifications, and a REST API.
+
+🌐 **Live Demo:** [paymentsystem-production-0887.up.railway.app](https://paymentsystem-production-0887.up.railway.app)
+
 ---
 
 ## Features
@@ -15,7 +18,10 @@ A full-stack payment system built with Django — from database architecture to 
 - 📈 **Charts** — income/expense bar charts with Chart.js on dashboard
 - 📱 **QR codes** — generate QR code for receiving transfers
 - 🛡️ **Admin panel** — manage wallets, transactions, limits, freeze/unfreeze accounts
-- 🐳 **Docker** — one command to run everything
+- 🌙 **Dark/light theme** — toggle between themes, preference saved in browser
+- 📲 **Mobile responsive** — fully adaptive layout across desktop and mobile
+- 🐳 **Docker** — one command to run everything locally
+- ⚙️ **CI/CD** — GitHub Actions runs pytest on every push; Railway auto-deploys on merge to main
 
 ---
 
@@ -30,7 +36,8 @@ A full-stack payment system built with Django — from database architecture to 
 | API | Django REST Framework + drf-spectacular |
 | Frontend | HTML, CSS, JavaScript, Chart.js |
 | Auth | Token authentication (DRF) |
-| DevOps | Docker + docker-compose |
+| DevOps | Docker + docker-compose + GitHub Actions |
+| Deployment | Railway |
 | Tests | pytest + factory-boy |
 | Email | Gmail SMTP via django.core.mail |
 
@@ -42,8 +49,8 @@ A full-stack payment system built with Django — from database architecture to 
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/yourusername/payflow
-cd payflow
+git clone https://github.com/vladikv/Payment_system
+cd Payment_system
 
 # 2. Set up environment variables
 cp .env.example .env
@@ -65,8 +72,8 @@ Open http://localhost:8000
 
 ```bash
 # 1. Clone and create virtual environment
-git clone https://github.com/yourusername/payflow
-cd payflow
+git clone https://github.com/vladikv/Payment_system
+cd Payment_system
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
@@ -127,6 +134,9 @@ EMAIL_HOST_PASSWORD=your-app-password
 
 # ExchangeRate API (get from https://exchangerate-api.com)
 EXCHANGE_RATE_API_KEY=your-api-key
+
+# Production only
+CSRF_TRUSTED_ORIGINS=https://yourdomain.up.railway.app
 ```
 
 ---
