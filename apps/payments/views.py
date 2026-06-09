@@ -12,7 +12,6 @@ from apps.wallets.models import Wallet, Transaction
 from apps.wallets import services
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-print("views.py stripe key:", settings.STRIPE_SECRET_KEY)
 
 # ──────────────────────────────────────────
 # 1. Deposit page via Stripe
