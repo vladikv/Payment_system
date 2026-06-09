@@ -149,7 +149,40 @@ def transfer_view(request):
 def history_view(request):
     wallet = request.user.wallet
     transactions = wallet.transactions.select_related('related_wallet__user').all()
-    return render(request, 'wallets/history.html', {'wallet': wallet, 'transactions': transactions})
+
+    # Search filters
+    tx_type = request.GET.get('type', '')
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    amount_min = request.GET.get('amount_min', '')
+    amount_max = request.GET.get('amount_max', '')
+
+    if tx_type:
+        transactions = transactions.filter(transaction_type=tx_type)
+
+    if date_from:
+        transactions = transactions.filter(created_at__date__gte=date_from)
+
+    if date_to:
+        transactions = transactions.filter(created_at__date__lte=date_to)
+
+    if amount_min:
+        transactions = transactions.filter(amount__gte=amount_min)
+
+    if amount_max:
+        transactions = transactions.filter(amount__lte=amount_max)
+
+    context = {
+        'wallet': wallet,
+        'transactions': transactions,
+        'tx_type': tx_type,
+        'date_from': date_from,
+        'date_to': date_to,
+        'amount_min': amount_min,
+        'amount_max': amount_max,
+    }
+    return render(request, 'wallets/history.html', context)
+
 
 @login_required
 def qr_code(request):
