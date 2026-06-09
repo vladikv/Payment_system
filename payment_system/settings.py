@@ -7,10 +7,6 @@ load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-CSRF_TRUSTED_ORIGINS = [
-    origin for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
-    if origin.startswith(('http://', 'https://'))
-]
 
 DEBUG = os.environ.get('DEBUG') == 'True'
 
@@ -142,3 +138,18 @@ CACHES = {
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# --- SECURITY / PROXY ---
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip().startswith(('http://', 'https://'))
+]
+
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
