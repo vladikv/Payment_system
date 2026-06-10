@@ -7,12 +7,13 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from apps.wallets import services
 from .serializers import (
     RegisterSerializer, UserSerializer,
     WalletSerializer, TransactionSerializer,
     TransferSerializer, WithdrawSerializer,
+    CardSerializer, CardTransferSerializer,
 )
+from apps.wallets.models import VirtualCard
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -227,3 +228,45 @@ def profile(request):
     Authorization: Token <token>
     """
     return Response(UserSerializer(request.user).data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def card_detail(request):
+    """
+    Get current user's virtual card info.
+    GET /api/card/
+    """
+    try:
+        card = request.user.wallet.card
+    except VirtualCard.DoesNotExist:
+        return Response({'error': 'No card found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    return Response(CardSerializer(card).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def transfer_by_card(request):
+    """
+    Transfer funds by card number.
+    POST /api/transfer/card/
+    { "card_number": "4111111111111111", "amount": "50.00" }
+    """
+    serializer = CardTransferSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        tx_out, tx_in = services.transfer_by_card(
+            sender_wallet=request.user.wallet,
+            card_number=serializer.validated_data['card_number'],
+            amount=serializer.validated_data['amount'],
+            description=serializer.validated_data.get('description', ''),
+        )
+        return Response({
+            'message': f"Successfully transferred {tx_out.amount}.",
+            'transaction': TransactionSerializer(tx_out).data,
+        }, status=status.HTTP_201_CREATED)
+
+    except ValidationError as e:
+        return Response({'error': e.message}, status=status.HTTP_400_BAD_REQUEST)

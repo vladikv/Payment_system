@@ -1,6 +1,29 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from apps.wallets.models import Wallet, Transaction
+from apps.wallets.models import Wallet, Transaction, VirtualCard
+
+class CardSerializer(serializers.ModelSerializer):
+    masked_number = serializers.ReadOnlyField()
+    expiry_display = serializers.ReadOnlyField()
+    owner = serializers.CharField(source='wallet.user.username', read_only=True)
+
+    class Meta:
+        model = VirtualCard
+        fields = ['masked_number', 'expiry_display', 'owner', 'created_at']
+
+
+class CardTransferSerializer(serializers.Serializer):
+    card_number = serializers.CharField(min_length=16, max_length=16)
+    amount = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=0.01)
+    description = serializers.CharField(max_length=255, required=False, allow_blank=True)
+
+    def validate_card_number(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError('Card number must contain only digits.')
+        from apps.wallets.models import VirtualCard
+        if not VirtualCard.objects.filter(number=value).exists():
+            raise serializers.ValidationError('Card not found.')
+        return value
 
 
 class RegisterSerializer(serializers.ModelSerializer):

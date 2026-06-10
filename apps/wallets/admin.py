@@ -1,5 +1,11 @@
 from django.contrib import admin
 from .models import Wallet, Transaction, TransactionLimit
+from .models import VirtualCard
+
+@admin.register(VirtualCard)
+class VirtualCardAdmin(admin.ModelAdmin):
+    list_display = ['wallet', 'masked_number', 'expiry_display', 'created_at']
+    readonly_fields = ['number', 'cvv_hash', 'created_at']
 
 class TransactionInline(admin.TabularInline):
     fk_name = 'wallet'

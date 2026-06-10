@@ -25,9 +25,10 @@ class Profile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-        from apps.wallets.models import Wallet, TransactionLimit
+        from apps.wallets.models import Wallet, TransactionLimit, create_virtual_card
         wallet = Wallet.objects.create(user=instance)
         TransactionLimit.objects.create(wallet=wallet)
+        create_virtual_card(wallet) 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

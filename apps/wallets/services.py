@@ -111,6 +111,23 @@ def withdraw(wallet: Wallet, amount: Decimal, description: str = '') -> Transact
     return tx
 
 
+def transfer_by_card(sender_wallet, card_number, amount, description=''):
+    """Transfer funds using recipient's card number."""
+    from .models import VirtualCard
+    from django.core.exceptions import ValidationError
+
+    try:
+        card = VirtualCard.objects.select_related('wallet').get(number=card_number)
+    except VirtualCard.DoesNotExist:
+        raise ValidationError('Card not found.')
+
+    receiver_wallet = card.wallet
+
+    if sender_wallet == receiver_wallet:
+        raise ValidationError('Cannot transfer to your own card.')
+
+    return transfer(sender_wallet, receiver_wallet, amount, description)
+
 def transfer(sender_wallet: Wallet, receiver_wallet: Wallet, amount: Decimal, description: str = '') -> tuple:
     """Transfer funds between two wallets. Returns (tx_out, tx_in)."""
     if amount <= 0:

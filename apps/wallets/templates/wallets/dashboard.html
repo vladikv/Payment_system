@@ -8,14 +8,67 @@
 {% endblock %}
 
 {% block content %}
+<!-- Virtual Card -->
+{% if wallet.card %}
+<div class="card-flip-container" onclick="this.classList.toggle('flipped')">
+    <div class="card-flip-inner">
 
-<!-- Balance -->
-<div class="balance-card">
-    <div class="balance-label">Current Balance</div>
-    <div class="balance-amount">{{ wallet.currency_symbol }}{{ wallet.balance }}</div>
-    <div class="balance-user">{{ user.get_full_name|default:user.username }} · {{ wallet.currency }}</div>
+        <!-- Front -->
+        <div class="virtual-card virtual-card-front">
+            <div class="virtual-card-top">
+                <div class="virtual-card-label">Virtual Card</div>
+                <div class="virtual-card-logo">PayFlow</div>
+            </div>
+            <div class="virtual-card-number" 
+                data-number="{{ wallet.card.number }}"
+                onclick="event.stopPropagation(); navigator.clipboard.writeText(this.dataset.number); var orig=this.textContent; this.textContent='Copied!'; setTimeout(() => this.textContent=orig, 1500)">
+                {{ wallet.card.number|slice:":4" }}
+                {{ wallet.card.number|slice:"4:8" }}
+                {{ wallet.card.number|slice:"8:12" }}
+                {{ wallet.card.number|slice:"12:16" }}
+            </div>
+            <div class="virtual-card-bottom">
+                <div>
+                    <div class="virtual-card-meta-label">Card Holder</div>
+                    <div class="virtual-card-meta-value">{{ user.get_full_name|default:user.username|upper }}</div>
+                </div>
+                <div>
+                    <div class="virtual-card-meta-label">Balance</div>
+                    <div class="virtual-card-meta-value">{{ wallet.currency_symbol }}{{ wallet.balance }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back -->
+        <div class="virtual-card virtual-card-back">
+            <div class="virtual-card-stripe"></div>
+            <div class="virtual-card-back-content">
+                <div class="virtual-card-back-row">
+                    <div class="virtual-card-meta-label">Card Number</div>
+                    <div class="virtual-card-meta-value">**** **** **** {{ wallet.card.number|slice:"12:16" }}</div>
+                </div>
+                <div class="virtual-card-back-row">
+                    <div class="virtual-card-meta-label">Card Holder</div>
+                    <div class="virtual-card-meta-value">{{ user.get_full_name|default:user.username|upper }}</div>
+                </div>
+                <div class="virtual-card-back-row">
+                    <div class="virtual-card-meta-label">Expires</div>
+                    <div class="virtual-card-meta-value">{{ wallet.card.expiry_display }}</div>
+                </div>
+                <div class="virtual-card-back-row">
+                    <div class="virtual-card-meta-label">CVV</div>
+                    <div class="virtual-card-meta-value" 
+                        onclick="event.stopPropagation(); this.textContent = this.textContent === '•••' ? '{{ wallet.card.cvv }}' : '•••'">
+                        •••
+                    </div>
+                </div>
+            </div>
+            <div class="virtual-card-hint">click to flip back</div>
+        </div>
+
+    </div>
 </div>
-
+{% endif %}
 <!-- Currency converter -->
 <div class="card converter-card">
     <div class="converter-title">Currency Converter</div>

@@ -212,6 +212,149 @@
 }
 
 
+/* ── Virtual Card Flip ── */
+.card-flip-container {
+    perspective: 1000px;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    height: 190px;
+}
+
+.card-flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.card-flip-container.flipped .card-flip-inner {
+    transform: rotateY(180deg);
+}
+
+.virtual-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: linear-gradient(135deg, #3730a3 0%, #1e1b4b 50%, #312e81 100%);
+    border: 1px solid rgba(108, 99, 255, 0.4);
+    border-radius: 16px;
+    padding: 1.75rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.virtual-card::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(165, 180, 252, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.virtual-card-back {
+    transform: rotateY(180deg);
+    padding: 0;
+    justify-content: flex-start;
+}
+
+.virtual-card-stripe {
+    width: 100%;
+    height: 45px;
+    background: rgba(0, 0, 0, 0.5);
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.virtual-card-back-content {
+    padding: 0 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+}
+
+.virtual-card-back-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.virtual-card-hint {
+    text-align: center;
+    font-size: 11px;
+    color: rgba(165, 180, 252, 0.4);
+    padding: 0.5rem;
+}
+
+.virtual-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.virtual-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(165, 180, 252, 0.7);
+}
+
+.virtual-card-logo {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+}
+
+.virtual-card-number {
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+}
+
+.virtual-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.virtual-card-meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(165, 180, 252, 0.6);
+    margin-bottom: 3px;
+}
+
+.virtual-card-meta-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 600px) {
+    .card-flip-container {
+        height: 180px;
+    }
+    .virtual-card-number {
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+    }
+}
 
 
 /* ── Mobile ── */
