@@ -19,6 +19,7 @@
 {% if user.is_authenticated %}
 <nav>
     <a href="{% url 'wallet_dashboard' %}" class="nav-logo">⬡ PayFlow</a>
+    <button class="burger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
     <div class="nav-links">
         <a href="{% url 'wallet_dashboard' %}">Wallet</a>
         <a href="{% url 'wallet_transfer' %}">Transfer</a>
